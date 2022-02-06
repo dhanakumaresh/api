@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { Customers } = require("./models");
+const { sendEmail } = require("./handlers/email.handler");
 
 const app = express();
 const port = 3000;
@@ -10,8 +11,12 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.post('/customer', async(req, res) => {
   const customer_data = req.body;
+  const { handyman_1, handyman_2 } = customer_data;
   try {
     await Customers.create(customer_data);
+    sendEmail(handyman_1);
+    sendEmail(handyman_2);
+    //sendEmail(handyman_3);
     console.log('succesfully created customerdata');
     // response handlers
     let success = {
