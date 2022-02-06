@@ -1,0 +1,71 @@
+[
+  {
+    "field": "email",
+    "primaryKey": true,
+    "type": "STRING",
+    "allowNull": false
+  },
+  {
+    "field": "first_name",
+    "primaryKey": true,
+    "type": "STRING",
+    "allowNull": false
+  },
+  {
+    "field": "last_name",
+    "type": "STRING",
+    "allowNull": false
+  },
+  {
+    "field": "project_id",
+    "type": "INTEGER",
+    "allowNull": false
+  },
+  {
+    "field": "age",
+    "type": "INTEGER",
+    "allowNull": false
+  },
+  {
+    "field": "street_name",
+    "type": "TEXT",
+    "allowNull": false
+  },
+  {
+    "field": "house_number",
+    "type": "INTEGER",
+    "allowNull": false
+  },
+  {
+    "field": "city",
+    "type": "TEXT",
+    "allowNull": false
+  },
+  {
+    "field": "location",
+    "type": "TEXT",
+    "allowNull": false
+  },
+  {
+    "field": "postzeil",
+    "type": "INTEGER",
+    "allowNull": false
+  },
+  {
+    "field": "spiegel_cost",
+    "type": "INTEGER",
+    "allowNull": true
+  },
+  {
+    "field": "handyman_1",
+    "type": "TEXT",
+    "allowNull": false
+  },
+  {
+    "field": "handyman_2",
+    "type": "TEXT",
+    "allowNull": false
+  }
+
+  
+]
