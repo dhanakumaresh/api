@@ -5,7 +5,6 @@ const { Customers } = require("./models");
 const app = express();
 const port = 3000;
 
-
 app.use(express.json({ limit: '50mb', extended: true }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -14,7 +13,19 @@ app.post('/customer', async(req, res) => {
   try {
     await Customers.create(customer_data);
     console.log('succesfully created customerdata');
-    res.send('successfully created the data')
+    // response handlers
+    let success = {
+      _httpStatus: 200,
+      _body: {
+          status: 0,
+          message: '_success',
+          _data: {}
+      }
+    };
+    let response = JSON.parse(JSON.stringify(success));
+    let { _httpStatus, _body } = response;
+    _body.message =  'create data' +_body.message;
+    return res.status(_httpStatus).send(_body); 
   } catch (error) {
     console.log('failed creating customerdata');
     throw new Error(error);
@@ -34,7 +45,6 @@ app.get('/customer/:project_id', async(req, res) => {
 });
 
 app.get('/customer', async(req, res) => {
-
   try {
     const customer_data = await Customers.findAll({ raw:true});
     console.log('succesfully retreived all customerdata');

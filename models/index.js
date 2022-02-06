@@ -1,3 +1,4 @@
+//sequelize used for database
 const Sequelize = require('sequelize');
 
 const customerConfig = {
