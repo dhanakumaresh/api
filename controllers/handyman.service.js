@@ -1,33 +1,58 @@
-const { Customers } = require("../models");
+const { Customers, Handymen } = require("../models");
 const { sendEmail } = require("../handlers/email.handler");
+const { success, created, failure } = require("../handlers/response.handler");
 
 const handymanService = () => {
 
     async function createProject(req, res) {
         const customer_data = req.body;
-        const { handyman_1, handyman_2 } = customer_data;
+        
+        const { salutation, 
+          first_name, 
+          last_name,
+          email,
+          city,
+          street,
+          house_number,
+          postal_code, 
+          birth_year,
+          location,
+          household_role,
+           ...handymanData} = customer_data;
+        
+        const { handyman_1, handyman_2 } = handymanData;
         try {
-          await Customers.create(customer_data);
+          await Customers.create({
+            salutation,
+            first_name, 
+            last_name,
+            email,
+            city,
+            street,
+            house_number,
+            postal_code, 
+            birth_year,
+            location,
+            household_role
+          });
+          console.log('succesfully created customerdata');
+          await Handymen.create(customer_data);
+          console.log('succesfully created handymendata');
           sendEmail(handyman_1);
           sendEmail(handyman_2);
-          //sendEmail(handyman_3);
-          console.log('succesfully created customerdata');
-          // response handlers
-          let success = {
-            _httpStatus: 200,
-            _body: {
-                status: 0,
-                message: '_success',
-                _data: {}
-            }
-          };
+
+
           let response = JSON.parse(JSON.stringify(success));
           let { _httpStatus, _body } = response;
-          _body.message =  'create data' +_body.message;
+          _body.message =  'Request status' +_body.message;
           return res.status(_httpStatus).send(_body); 
         } catch (error) {
-          console.log('failed creating customerdata');
-          throw new Error(error);
+          console.log('failed creating customerdata', error);
+          let response = JSON.parse(JSON.stringify(failure));
+          let { _httpStatus, _body } = response;
+          _body.message =  'Request status :' +_body.message;
+          return res.status(_httpStatus).send(_body); 
+          
         }
     };
 

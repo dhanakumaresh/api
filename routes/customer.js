@@ -1,7 +1,8 @@
 const express = require('express');
 const customer = express.Router({ mergeParams: true });
 
-const {handymanService} = require('../controllers');
+
+const { handymanService } = require('../controllers');
 
 customer.post('/',  handymanService.createProject);
   

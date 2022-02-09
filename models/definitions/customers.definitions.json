@@ -1,0 +1,60 @@
+[
+    {
+      "field": "first_name",
+      "type": "STRING",
+      "allowNull": false
+    },
+    {
+      "field": "last_name",
+      "type": "STRING",
+      "allowNull": false
+    },
+    {
+     "field": "email",
+     "primaryKey": true,
+     "type": "STRING",
+     "allowNull": false
+    },
+    {
+     "field": "salutation",
+     "type": "STRING",
+     "allowNull": true
+    },
+    {
+     "field": "city",
+     "type": "STRING",
+     "allowNull": false
+    },
+    {
+     "field": "street",
+     "type": "STRING",
+     "allowNull": false
+    },
+    {
+      "field": "house_number",
+      "type": "INTEGER",
+      "allowNull": false
+    },
+    {
+     "field": "postal_code",
+     "type": "INTEGER",
+     "allowNull": false
+    },
+    {
+     "field": "birth_year",
+     "type": "INTEGER",
+     "allowNull": false
+    },
+    {
+     "field": "location",
+     "type": "STRING",
+     "allowNull": false
+    },
+    {
+     "field": "household_role",
+     "type": "STRING",
+     "allowNull": false
+    }
+   
+  ]
+  
