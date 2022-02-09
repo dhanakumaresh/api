@@ -6,8 +6,12 @@
     "allowNull": false
   },
   {
+    "field": "salutation",
+    "type": "STRING",
+    "allowNull": true
+  },
+  {
     "field": "first_name",
-    "primaryKey": true,
     "type": "STRING",
     "allowNull": false
   },
@@ -22,12 +26,12 @@
     "allowNull": false
   },
   {
-    "field": "age",
+    "field": "birth_year",
     "type": "INTEGER",
     "allowNull": false
   },
   {
-    "field": "street_name",
+    "field": "street",
     "type": "TEXT",
     "allowNull": false
   },
@@ -47,7 +51,7 @@
     "allowNull": false
   },
   {
-    "field": "postzeil",
+    "field": "postal_code",
     "type": "INTEGER",
     "allowNull": false
   },
