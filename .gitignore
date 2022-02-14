@@ -105,3 +105,6 @@ dist
 
 #package lock file
 package-lock.json
+
+#working file
+models/definitions/dummy.js

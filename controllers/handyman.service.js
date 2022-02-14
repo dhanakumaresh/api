@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const { Customers, Handymen } = require("../models");
 const { sendEmail } = require("../handlers/email.handler");
 const { success, created, failure } = require("../handlers/response.handler");
@@ -7,7 +9,8 @@ const handymanService = () => {
     async function createProject(req, res) {
         const customer_data = req.body;
         
-        const { salutation, 
+        const { 
+          salutation, 
           first_name, 
           last_name,
           email,
@@ -18,11 +21,11 @@ const handymanService = () => {
           birth_year,
           location,
           household_role,
-           ...handymanData} = customer_data;
-        
-        const { handyman_1, handyman_2 } = handymanData;
+          ...handymanInfo
+        } = customer_data;
+
         try {
-          await Customers.create({
+          let customerInfo = {
             salutation,
             first_name, 
             last_name,
@@ -34,13 +37,33 @@ const handymanService = () => {
             birth_year,
             location,
             household_role
-          });
-          console.log('succesfully created customerdata');
-          await Handymen.create(customer_data);
-          console.log('succesfully created handymendata');
-          sendEmail(handyman_1);
-          sendEmail(handyman_2);
+          };
 
+          let customer = await Customers.findOne({ where: { email }, raw: true });
+          if(!_.isEmpty(customer)) {
+            await Customers.update(customerInfo,{ where: { email } });
+          }else {
+            await Customers.create(customerInfo);
+          };
+          console.log('succesfully created customerdata');
+          
+          const { articles, offer_details, handymen } = handymanInfo;
+
+          const finalDetails = {
+            ...handymanInfo,
+            ...customerInfo,
+            articles: JSON.stringify(articles),
+            offer_details: JSON.stringify(offer_details),
+            handymen: JSON.stringify(handymen)
+          };
+
+          await Handymen.create(finalDetails);
+          console.log('succesfully created handymendata');
+
+          handymen.forEach(({ email }) => {
+            sendEmail(email);
+          });
+          console.log('succesfully sent data to handymen email');
 
           let response = JSON.parse(JSON.stringify(success));
           let { _httpStatus, _body } = response;
@@ -51,15 +74,14 @@ const handymanService = () => {
           let response = JSON.parse(JSON.stringify(failure));
           let { _httpStatus, _body } = response;
           _body.message =  'Request status :' +_body.message;
-          return res.status(_httpStatus).send(_body); 
-          
+          return res.status(_httpStatus).send(_body);  
         }
     };
 
     async function readProject(req, res) {
         const { project_id } = req.params;
         try {
-          const customer_data = await Customers.findOne({ where: {project_id}, raw:true});
+          const customer_data = await Handymen.findOne({ where: {project_id}, raw:true});
           console.log('succesfully retrieved customerdata');
           res.send(customer_data);
         } catch (error) {
@@ -70,8 +92,8 @@ const handymanService = () => {
 
     async function readAllProject(req, res) {
         try {
-          const customer_data = await Customers.findAll({ raw:true});
           console.log('succesfully retreived all customerdata');
+          const customer_data = await Handymen.findAll({ raw:true});
           res.send(customer_data);
         } catch (error) {
           console.log('failed retrieving all customerdata');
