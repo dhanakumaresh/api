@@ -19,7 +19,7 @@ const sendEmail = (email) => {
         from: 'learnandfuntogether@gmail.com',
         to: email,
         subject: 'My first Email!!!',
-        text: "Test Email_ from Joto Guys"
+        html: "<p>Sending some HTML to test.</p>"
     };
     
     transporter.sendMail(mailOptions, (error, info) => {
