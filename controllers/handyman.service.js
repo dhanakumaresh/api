@@ -7,6 +7,9 @@ const { success, created, failure } = require("../handlers/response.handler");
 const handymanService = () => {
 
     async function createProject(req, res) {
+      // res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
+      // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      //next();
         const customer_data = req.body;
         
         const { 
@@ -83,7 +86,11 @@ const handymanService = () => {
         try {
           const customer_data = await Handymen.findOne({ where: {project_id}, raw:true});
           console.log('succesfully retrieved customerdata');
-          res.send(customer_data);
+          let response = JSON.parse(JSON.stringify(success));
+          let { _httpStatus, _body } = response;
+          _body.message =  'Read_Data' +_body.message;
+          _body._data = customer_data;
+          return res.status(_httpStatus).send(_body); 
         } catch (error) {
           console.log('failed retrieving customerdata');
           throw new Error(error);
@@ -92,19 +99,46 @@ const handymanService = () => {
 
     async function readAllProject(req, res) {
         try {
-          console.log('succesfully retreived all customerdata');
           const customer_data = await Handymen.findAll({ raw:true});
-          res.send(customer_data);
+          console.log('succesfully retreived all customerdata');
+          let response = JSON.parse(JSON.stringify(success));
+          console.log('response: ',response)
+          let { _httpStatus, _body } = response;
+          _body.message =  'Read_all_Data' +_body.message;
+          _body._data = customer_data;
+          return res.status(_httpStatus).send(_body); 
         } catch (error) {
-          console.log('failed retrieving all customerdata');
-          throw new Error(error);
+          console.log('failed retrieving all customerdata',error);
+          let response = JSON.parse(JSON.stringify(failure));
+          let { _httpStatus, _body } = response;
+          _body.message =  'Read_all_Data :' +_body.message;
+          return res.status(_httpStatus).send(_body);  
         }
     };
+
+    async function deleteAllProject(req, res) {
+      const { project_id } = req.params;
+      try {
+        await Handymen.destroy({ where: {project_id}, raw:true});
+        console.log('succesfully deleted all customerdata');
+        let response = JSON.parse(JSON.stringify(success));
+        let { _httpStatus, _body } = response;
+        _body.message =  'Delete_all_Data'+_body.message;
+        return res.status(_httpStatus).send(_body); 
+      } catch (error) {
+        console.log('failed deleting data',error);
+        let response = JSON.parse(JSON.stringify(failure));
+        let { _httpStatus, _body } = response;
+        _body.message =  'Delete_all_Data'+_body.message;
+        return res.status(_httpStatus).send(_body);  
+      }
+  };
 
     return {
         createProject,
         readProject,
-        readAllProject
+        readAllProject,
+        deleteAllProject
     };
 };
 

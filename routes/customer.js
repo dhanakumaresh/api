@@ -9,5 +9,6 @@ customer.post('/',  handymanService.createProject);
 customer.get('/:project_id', handymanService.readProject);
   
 customer.get('/', handymanService.readAllProject);
+customer.delete('/:project_id', handymanService.deleteAllProject);
 
 module.exports = customer;
