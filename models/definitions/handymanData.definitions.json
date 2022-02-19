@@ -1,0 +1,84 @@
+[
+    {
+        "field": "company",
+        "type": "TEXT",
+        "allowNull": false,
+        "primaryKey": true
+    },
+    {
+        "field": "ceo",
+        "type": "STRING",
+        "allowNull": false
+    },
+    {
+        "field": "postal_code",
+        "type": "INTEGER",
+        "allowNull": false
+    },
+    {
+        "field": "city",
+        "type": "TEXT",
+        "allowNull": false
+    },
+    {
+        "field": "email",
+        "type": "STRING",
+        "allowNull": false
+    },
+    {
+        "field": "street",
+        "type": "STRING",
+        "allowNull": false
+    },
+    {
+        "field": "house_number",
+        "type": "INTEGER",
+        "allowNull": false
+    },
+    {
+        "field": "phone",
+        "type": "STRING",
+        "allowNull": false
+    },
+    {
+        "field": "web",
+        "type": "STRING",
+        "allowNull": false
+    },
+    {
+        "field": "profession",
+        "type": "TEXT",
+        "allowNull": false
+    },
+    {
+        "field": "rating",
+        "type": "FLOAT",
+        "allowNull": false
+    },
+    {
+      "field": "distance_wish",
+      "type": "INTEGER",
+      "allowNull": false
+    },
+    {
+        "field": "lat",
+        "type": "FLOAT",
+        "allowNull": false
+    },
+    {
+        "field": "lng",
+        "type": "FLOAT",
+        "allowNull": false
+    },
+    {
+        "field": "availability",
+        "type": "INTEGER",
+        "allowNull": false
+    },
+    {
+        "field": "comments",
+        "type": "TEXT",
+        "allowNull": false
+    }
+ 
+]

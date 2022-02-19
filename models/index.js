@@ -10,7 +10,7 @@ const customerConfig = {
   logging: false
 };
 
-const serviceConfig = {
+const invoiceConfig = {
   host: "localhost",
   database: "handymen",
   username: "root",
@@ -20,9 +20,9 @@ const serviceConfig = {
 };
 
 
-const sequelize_c = new Sequelize(customerConfig.database, customerConfig.username, customerConfig.password, customerConfig);
+const sequelize_customer = new Sequelize(customerConfig.database, customerConfig.username, customerConfig.password, customerConfig);
 
-sequelize_c.authenticate()
+sequelize_customer.authenticate()
 .then(() => {
   console.log('Customer_Database: connection established.');
 })
@@ -30,9 +30,9 @@ sequelize_c.authenticate()
   console.log('Customer_Database: unable to establish connection noting error: ', err);
 });
 
-const sequelize_h = new Sequelize(serviceConfig.database, serviceConfig.username, serviceConfig.password, serviceConfig);
+const sequelize_handymen = new Sequelize(invoiceConfig.database, invoiceConfig.username, invoiceConfig.password, invoiceConfig);
 
-sequelize_h.authenticate()
+sequelize_handymen.authenticate()
 .then(() => {
   console.log('Service_Database: connection established.');
 })
@@ -40,8 +40,11 @@ sequelize_h.authenticate()
   console.log('Service_Database: unable to establish connection noting error: ', err);
 });
 
-const Customers = require('./customers.model')(sequelize_c, Sequelize);
-const Handymen = require('./handymen.model')(sequelize_h, Sequelize);
+const Customers = require('./customers.model')(sequelize_customer, Sequelize);
+const HandymanInvoice = require('./HandymanInvoice.model')(sequelize_handymen, Sequelize);
+const HandymanData = require('./HandymanData.model')(sequelize_handymen, Sequelize);
 
+HandymanInvoice.hasMany(HandymanData, { foreignKey: 'company' });
+HandymanData.belongsTo(HandymanInvoice, { foreignKey: 'company' });
 
-module.exports = { Handymen , Customers }
+module.exports = { Customers, HandymanInvoice, HandymanData }

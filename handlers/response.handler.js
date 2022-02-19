@@ -19,8 +19,7 @@ let success = {
     _httpStatus: 500,
     _body: {
         status: 1,
-        message: '_Bad_request',
-        _data: {}
+        message: '_Bad_request'
     }
   };
 
