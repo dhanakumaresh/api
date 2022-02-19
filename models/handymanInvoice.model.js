@@ -1,4 +1,4 @@
-const definitionsModel = require('../models/definitions/handymen.definitions');
+const definitionsModel = require('../models/definitions/handymanInvoice.definitions');
 
 module.exports = (sequelize, Sequelize) => {
   const tableDefinitions = definitionsModel.reduce((acc, cur) => {
@@ -10,5 +10,5 @@ module.exports = (sequelize, Sequelize) => {
     };
     return acc;
   }, {});
-  return sequelize.define(`service`, tableDefinitions, { timestamps: false, freezeTableName: true });
+  return sequelize.define(`invoice_data`, tableDefinitions, { timestamps: false, freezeTableName: true });
 };
