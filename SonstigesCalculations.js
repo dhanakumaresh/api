@@ -3,7 +3,7 @@ const article = 200
 const material = 100
 const labour = 50
 
-const Fliesen = (sqm,article,material,labour) => {
+export default calc = (sqm,article,material,labour) => {
     let article_sqm = sqm * 2.97
     let other_sqm = sqm * 2.7
 

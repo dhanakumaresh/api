@@ -12,7 +12,7 @@
     },
     {
         "field": "postal_code",
-        "type": "INTEGER",
+        "type": "STRING",
         "allowNull": false
     },
     {
@@ -27,12 +27,12 @@
     },
     {
         "field": "street",
-        "type": "STRING",
+        "type": "TEXT",
         "allowNull": false
     },
     {
         "field": "house_number",
-        "type": "INTEGER",
+        "type": "STRING",
         "allowNull": false
     },
     {
@@ -42,7 +42,7 @@
     },
     {
         "field": "web",
-        "type": "STRING",
+        "type": "TEXT",
         "allowNull": false
     },
     {

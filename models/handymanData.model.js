@@ -10,5 +10,5 @@ module.exports = (sequelize, Sequelize) => {
     };
     return acc;
   }, {});
-  return sequelize.define(`handyman_data`, tableDefinitions, { timestamps: false, freezeTableName: true });
+  return sequelize.define(`handyman_info`, tableDefinitions, { timestamps: false, freezeTableName: true });
 };

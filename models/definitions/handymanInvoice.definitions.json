@@ -34,8 +34,7 @@
     {
         "field": "updated_articles",
         "type": "TEXT",
-        "allowNull": true,
-        "defaultValue": null
+        "allowNull": true
     },
     {
         "field": "company",
