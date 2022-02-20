@@ -5,12 +5,19 @@ const { Customers, HandymanInvoice, HandymanData } = require("../models");
 const { sendEmail } = require("../handlers/email.handler");
 const { success, created, failure } = require("../handlers/response.handler");
 
+// Calculate total cost
 const _calculation = (offer_details,articles) => {
   // first map articles then u will get sperate elemnet/object and then destructure 
   // the object by getting material, cost aand so on 
   // then call the function from there and return total
   // after total is returned, add total in that specific article ex: total: 1000
   // finally return articles
+  articles.forEach(article=>{
+    let total = Object.values(article).reduce((acc, curr) => !_.isString(curr) && acc + curr);
+    total = Number(_.round(total, 2).toFixed(2));
+    let index = _.findIndex(articles, ['article_type', article.article_type]);
+    _.set(articles[index],'total',total);
+  });
 }
 
 
@@ -21,7 +28,7 @@ const handymanService = () => {
         let { customer_data, handymen_data, offer_details, articles, project_id } = req.body;
 
         try {  
-          
+    
           let customer = await Customers.findOne({ where: { email: customer_data.email }, raw: true });
           if(!_.isEmpty(customer)) {
             console.log('updating customer data on dB');
@@ -33,12 +40,13 @@ const handymanService = () => {
             console.log('succesfully created customer data on dB');
           };        
           
-
+          _calculation(offer_details,articles);
+       
           handymen_data.map(async(handyman_data) => {
             let invoice_data = {};
             let { company, email } = handyman_data;
             let invoice_id = uuid.v4();
-            articles = await _calculation(articles);
+            //articles = await _calculation(articles);
             invoice_data['company'] = company;
             invoice_data['invoice_id'] = invoice_id;
             invoice_data['project_id'] = project_id;
@@ -52,7 +60,7 @@ const handymanService = () => {
             console.log('succesfully created handyman invoice on dB');
 
             await sendEmail(email,project_id,invoice_id);
-            console.log('succesfully sent data to handymen email',invoice_id);
+            console.log('succesfully sent data to handymen email');
           });
 
           let response = JSON.parse(JSON.stringify(success));
@@ -83,7 +91,7 @@ const handymanService = () => {
           if(_.isEmpty(handyman)) throw new Error('no data received from handyman dB');
           invoice_data['handyman_data'] = handyman;
 
-          console.log('succesfully retrieved handyman invoice');
+          console.log('succesfully retrieved handyman invoice', invoice_data);
           let response = JSON.parse(JSON.stringify(success));
           let { _httpStatus, _body } = response;
           _body.message = 'Read_Data' +_body.message;
