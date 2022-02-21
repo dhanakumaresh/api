@@ -4,22 +4,38 @@ const uuid = require('uuid');
 const { Customers, HandymanInvoice, HandymanData } = require("../models");
 const { sendEmail } = require("../handlers/email.handler");
 const { success, created, failure } = require("../handlers/response.handler");
+const { articleCalc } = require('../utilities/calculations');
 
-// Calculate total cost
-const _calculation = (offer_details,articles) => {
-  // first map articles then u will get sperate elemnet/object and then destructure 
-  // the object by getting material, cost aand so on 
-  // then call the function from there and return total
-  // after total is returned, add total in that specific article ex: total: 1000
-  // finally return articles
-  articles.forEach(article=>{
-    let total = Object.values(article).reduce((acc, curr) => !_.isString(curr) && acc + curr);
-    total = Number(_.round(total, 2).toFixed(2));
-    let index = _.findIndex(articles, ['article_type', article.article_type]);
-    _.set(articles[index],'total',total);
-  });
+
+const _arbeitenCalucation = () => {
+  // let totalArbeiten = [];
+  let fliesen = articleCalc('fliesen',4,2.97,2.7,50,6,75);
+  let elektro = articleCalc('elektro',4,1,1,45,30,60);
+  let trocken = articleCalc('trocken',4,1,1,11,5,40); 
+  let maler = articleCalc('maler',4,3.2,3.2,4.40,10,18.50); 
+  let demontage = articleCalc('demontage', 4,0,2.7,0,0,20); 
+  let sonstiges = articleCalc('sonstiges', 4,0,1,0,0,30);
+
+  let newArticles = [ fliesen, elektro, trocken, maler, demontage, sonstiges];
+  return newArticles;
 }
 
+// Calculate total cost
+const _calculation = async (offer_details,articles) => {
+
+  articles.forEach(article=>{
+    let fliesenExists = _.includes(article,'fliesen_arbeiten');
+    if(fliesenExists){
+      let newArticles = _arbeitenCalucation();
+      articles.push([...newArticles]);
+    }else{
+      let total = Object.values(article).reduce((acc, curr) => !_.isString(curr) && acc + curr);
+      total = Number(_.round(total, 2).toFixed(2));
+      let index = _.findIndex(articles, ['article_type', article.article_type]);
+      _.set(articles[index],'total',total);
+    }
+  });
+};
 
 const handymanService = () => {
 
@@ -28,7 +44,8 @@ const handymanService = () => {
         let { customer_data, handymen_data, offer_details, articles, project_id } = req.body;
 
         try {  
-    
+          await _calculation(offer_details,articles);
+          // await _calculateTotalSum(articles);
           let customer = await Customers.findOne({ where: { email: customer_data.email }, raw: true });
           if(!_.isEmpty(customer)) {
             console.log('updating customer data on dB');
@@ -40,7 +57,6 @@ const handymanService = () => {
             console.log('succesfully created customer data on dB');
           };        
           
-          _calculation(offer_details,articles);
        
           handymen_data.map(async(handyman_data) => {
             let { company, email } = handyman_data;
