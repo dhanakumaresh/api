@@ -43,15 +43,18 @@ const handymanService = () => {
           _calculation(offer_details,articles);
        
           handymen_data.map(async(handyman_data) => {
-            let invoice_data = {};
             let { company, email } = handyman_data;
+            let invoice_data = {};
             let invoice_id = uuid.v4();
-            //articles = await _calculation(articles);
+
+            const handyman = await HandymanData.findOne({ where: {company, email}, raw:true});
+            if(_.isEmpty(handyman)) throw new Error('no data received from handyman dB');
+            
             invoice_data['company'] = company;
             invoice_data['invoice_id'] = invoice_id;
             invoice_data['project_id'] = project_id;
             invoice_data['customer_data'] = JSON.stringify(customer_data);
-            invoice_data['handyman_data'] = JSON.stringify(handyman_data);
+            invoice_data['handyman_data'] = JSON.stringify(handyman);
             invoice_data['offer_details'] = JSON.stringify(offer_details);
             invoice_data['articles'] = JSON.stringify(articles);
             
@@ -76,6 +79,38 @@ const handymanService = () => {
         }
     };
 
+    async function updateProject(req, res) {
+      const { project_id, invoice_id } = req.params;
+      let { customer_data, handyman_data, offer_details, articles, updated_articles } = req.body;
+
+      try {  
+        let invoice_data = {};
+        let { company } = handyman_data;
+        invoice_data['company'] = company;
+        invoice_data['invoice_id'] = invoice_id;
+        invoice_data['project_id'] = project_id;
+        invoice_data['customer_data'] = JSON.stringify(customer_data);
+        invoice_data['handyman_data'] = JSON.stringify(handyman_data);
+        invoice_data['offer_details'] = JSON.stringify(offer_details);
+        invoice_data['articles'] = JSON.stringify(articles);
+        invoice_data['updated_articles'] = JSON.stringify(updated_articles);
+          
+        console.log('updating handyman invoice on dB');
+        await HandymanInvoice.update(invoice_data,{ where: {invoice_id,project_id}, raw:true });
+        console.log('succesfully updated handyman invoice on dB');
+
+        let response = JSON.parse(JSON.stringify(success));
+        let { _httpStatus, _body } = response;
+        _body.message =  'updated_articles' +_body.message;
+        return res.status(_httpStatus).send(_body); 
+      } catch (error) {
+        console.log('failed updating handyman invoice', error);
+        let response = JSON.parse(JSON.stringify(failure));
+        let { _httpStatus, _body } = response;
+        _body.message =  'updated_articles' +_body.message;
+        return res.status(_httpStatus).send(_body);  
+      }
+  };
     async function readProject(req, res) {
         const { project_id, invoice_id } = req.params;
         try {
@@ -85,11 +120,6 @@ const handymanService = () => {
           invoice_data.customer_data = invoice_data.customer_data && JSON.parse(invoice_data.customer_data);
           invoice_data.handyman_data = invoice_data.handyman_data && JSON.parse(invoice_data.handyman_data);
           invoice_data.offer_details = invoice_data.offer_details && JSON.parse(invoice_data.offer_details);
-
-          let { company, email } = invoice_data.handyman_data;
-          const handyman = await HandymanData.findOne({ where: {company, email}, raw:true});
-          if(_.isEmpty(handyman)) throw new Error('no data received from handyman dB');
-          invoice_data['handyman_data'] = handyman;
 
           console.log('succesfully retrieved handyman invoice', invoice_data);
           let response = JSON.parse(JSON.stringify(success));
@@ -123,8 +153,9 @@ const handymanService = () => {
   };
 
     async function readAllProject(req, res) {
-      try {
-        const invoice_data = await HandymanData.findAll({raw: true});
+        const { project_id } = req.params;
+        try {
+        const invoice_data = await HandymanInvoice.findAll({where: {project_id}, raw: true});
         console.log('succesfully retreived all customerdata');
         let response = JSON.parse(JSON.stringify(success));
         let { _httpStatus, _body } = response;
@@ -159,11 +190,12 @@ const handymanService = () => {
    };
 
     return {
-        createProject,
-        readProject,
-        readAllProject,
-        deleteAllProject,
-        registerHandymen
+      createProject,
+      updateProject,
+      readProject,
+      readAllProject,
+      deleteAllProject,
+      registerHandymen
     };
 };
 
