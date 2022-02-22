@@ -1,0 +1,45 @@
+[
+    {
+        "field": "invoice_id",
+        "type": "UUID",
+        "allowNull": false,
+        "defaultValue": "UUIDV1",
+        "primaryKey": true
+    },
+    {
+        "field": "project_id",
+        "type": "INTEGER",
+        "allowNull": false
+    },
+    {
+        "field": "customer_data",
+        "type": "TEXT",
+        "allowNull": true
+    },
+    {
+        "field": "handyman_data",
+        "type": "TEXT",
+        "allowNull": false
+    },
+    {
+        "field": "offer_details",
+        "type": "TEXT",
+        "allowNull": false
+    },
+    {
+        "field": "articles",
+        "type": "TEXT",
+        "allowNull": false
+    },
+    {
+        "field": "updated_articles",
+        "type": "TEXT",
+        "allowNull": true
+    },
+    {
+        "field": "company",
+        "type": "TEXT",
+        "foriegnKey": true,
+        "allowNull": false
+    } 
+]

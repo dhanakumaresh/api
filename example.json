@@ -1,0 +1,91 @@
+{
+    "customer_data": {
+        "salutation":"Herr",
+         "first_name":"postman",
+         "last_name":"Kumaresh",
+         "project_id":2038,
+         "birth_year":2020,
+         "email":"test18@gmail.com",
+         "street":"Humboldt str",
+         "house_number":2,
+         "postal_code":53121,
+         "city":"Bonn",
+         "household_role":"owner",
+         "location":"obergeschos"
+    },
+    "handymen_data": [
+        {   "company": "Dimitrios Caloudis Haustechnik",
+            "email": "d.subramani@reassist.de",
+            "availability": "Apr 2022"
+        },
+        { "company": "Santhosh haustechnick",
+            "email": "d.subramani@reassist.de",
+            "availability": "Apr 2022"
+        },
+
+        { "company": "TamilNadu Electricals",
+            "email": "d.subramani@reassist.de",
+            "availability": "Apr 2022"
+        }
+    ],
+    "offer_details":{
+        "sqm":4,
+        "width":1.57,
+        "Depth":2.59
+    },
+    "articles": [
+            {
+                 
+                    "article_type":"spiegel",
+                    "article_name": "Talos Noble Spiegel",
+                    "article_price": 121.10,
+                    "material":10.92,
+                    "labour":25.21
+               
+            },   
+            {
+               
+                    "article_type":"waschbecken",
+                    "article_name": "waschbeckenunterschrank mit einbaubecken 90cm",
+                    "article_price": 333.83,
+                    "material":120.17,
+                    "labour":100.84
+
+                
+            },
+               {
+                    "article_type":"wc",
+                    "article_name": "Laufen PRO Stand-Tiefspül-WC",
+                    "article_price": 256.00,
+                    "material":454.45,
+                    "labour":84.03
+               },
+              
+            { 
+                    "article_type":"badewanne",
+                    "article_name": "Villeroy & Boch Collaro Duo Rechteckige Badewanne",
+                    "article_price": 799.77,
+                    "material":275.29,
+                    "labour":168.07
+                
+            },
+    
+                {
+                    "article_type":"amatur",
+                    "article_name": "Design Waschtisch Amatur Azalia -30 verchromt ",
+                    "article_price": 139.35,
+                    "material":10.92,
+                    "labour":75.63
+
+                },
+                {
+                    "article_type":"fliesen_arbeiten",
+                    "article_name": "Ausstattungskosten (Wandfliese Materia Basic Steingut Weiss Matt ",
+                    "article_price": 139.35,
+                    "material":10.92,
+                    "labour":75.63
+                }                   
+    ]
+
+
+}
