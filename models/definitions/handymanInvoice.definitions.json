@@ -32,7 +32,17 @@
         "allowNull": false
     },
     {
+        "field": "articles_total",
+        "type": "TEXT",
+        "allowNull": false
+    },
+    {
         "field": "updated_articles",
+        "type": "TEXT",
+        "allowNull": true
+    },
+    {
+        "field": "updated_total",
         "type": "TEXT",
         "allowNull": true
     },
