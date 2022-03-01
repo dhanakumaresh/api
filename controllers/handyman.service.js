@@ -4,29 +4,42 @@ const uuid = require('uuid');
 const { Customers, HandymanInvoice, HandymanData } = require("../models");
 const { sendEmail } = require("../handlers/email.handler");
 const { success, created, failure } = require("../handlers/response.handler");
-const { articleCalc } = require('../utilities/calculations');
+const { articleCalc, taxCalculation } = require('../utilities/calculations');
 
 
-const _arbeitenCalucation = () => {
-  // let totalArbeiten = [];
-  let fliesen = articleCalc('fliesen',4,2.97,2.7,50,6,75);
-  let elektro = articleCalc('elektro',4,1,1,45,30,60);
-  let trocken = articleCalc('trocken',4,1,1,11,5,40); 
-  let maler = articleCalc('maler',4,3.2,3.2,4.40,10,18.50); 
-  let demontage = articleCalc('demontage', 4,0,2.7,0,0,20); 
-  let sonstiges = articleCalc('sonstiges', 4,0,1,0,0,30);
+const _calculateTax = async (articles_total) => {
+  //let articlesobj = articles_total
+  console.log('dfsf')
+  articles_t = taxCalculation(articles_total);
+  let totalSum = Object.assign(articles_total, articles_t)
+  //articles_total.push(...articles_t);
+  console.log(totalSum)
+  return totalSum;
+}
 
-  let newArticles = [ fliesen, elektro, trocken, maler, demontage, sonstiges];
+
+const _arbeitenCalucation = (sqm) => {
+
+  let fliesen = articleCalc('fliesen',sqm,2.97,2.7,50,6,75);
+  let elektro = articleCalc('elektro',sqm,1,1,45,30,60);
+  let trocken = articleCalc('trocken',sqm,1,1,11,5,40); 
+  let maler = articleCalc('maler',sqm,3.2,3.2,4.40,10,18.50); 
+  let heizung = articleCalc('heizung', sqm,0,0,195,55,75);
+  let demontage = articleCalc('demontage', sqm,0,2.7,0,0,20); 
+  let sonstiges = articleCalc('sonstiges', sqm,0,1,0,0,30);
+  
+  let newArticles = [ fliesen, elektro, trocken, heizung, maler, demontage, sonstiges];
   return newArticles;
 }
 
-// Calculate total cost
+// Calculate cost for different arbeiten
+
 const _calculation = async (offer_details,articles) => {
 
   articles.forEach(article=>{
     let fliesenExists = _.includes(article,'fliesen_arbeiten');
     if(fliesenExists){
-      let newArticles = _arbeitenCalucation();
+      let newArticles = _arbeitenCalucation(offer_details.sqm);
       articles.push([...newArticles]);
     }else{
       let total = Object.values(article).reduce((acc, curr) => !_.isString(curr) && acc + curr);
@@ -41,11 +54,13 @@ const handymanService = () => {
 
     async function createProject(req, res) {
 
-        let { customer_data, handymen_data, offer_details, articles, project_id } = req.body;
+        let { customer_data, handymen_data, offer_details, articles, articles_total, project_id } = req.body;
+        console.log('total:', articles_total)
 
         try {  
           await _calculation(offer_details,articles);
-          // await _calculateTotalSum(articles);
+          let totalSum = await _calculateTax(articles_total);
+          console.log(totalSum)
           let customer = await Customers.findOne({ where: { email: customer_data.email }, raw: true });
           if(!_.isEmpty(customer)) {
             console.log('updating customer data on dB');
@@ -63,7 +78,8 @@ const handymanService = () => {
             let invoice_data = {};
             let invoice_id = uuid.v4();
 
-            const handyman = await HandymanData.findOne({ where: {company, email}, raw:true});
+            const handyman = await HandymanData.findOne({ where: {company}, raw:true});
+            console.log(handyman)
             if(_.isEmpty(handyman)) throw new Error('no data received from handyman dB');
             
             invoice_data['company'] = company;
@@ -73,6 +89,7 @@ const handymanService = () => {
             invoice_data['handyman_data'] = JSON.stringify(handyman);
             invoice_data['offer_details'] = JSON.stringify(offer_details);
             invoice_data['articles'] = JSON.stringify(articles);
+            invoice_data['articles_total'] = JSON.stringify(totalSum);
             
             console.log('creating handyman invoice data on dB');
             await HandymanInvoice.create(invoice_data);
@@ -97,7 +114,7 @@ const handymanService = () => {
 
     async function updateProject(req, res) {
       const { project_id, invoice_id } = req.params;
-      let { customer_data, handyman_data, offer_details, articles, updated_articles } = req.body;
+      let { customer_data, handyman_data, offer_details, articles, articles_total, updated_articles, updated_total } = req.body;
 
       try {  
         let invoice_data = {};
@@ -109,7 +126,9 @@ const handymanService = () => {
         invoice_data['handyman_data'] = JSON.stringify(handyman_data);
         invoice_data['offer_details'] = JSON.stringify(offer_details);
         invoice_data['articles'] = JSON.stringify(articles);
+        invoice_data['articles_total'] = JSON.stringify(articles_total);
         invoice_data['updated_articles'] = JSON.stringify(updated_articles);
+        invoice_data['updated_total'] = JSON.stringify(updated_total);
           
         console.log('updating handyman invoice on dB');
         await HandymanInvoice.update(invoice_data,{ where: {invoice_id,project_id}, raw:true });
@@ -132,7 +151,9 @@ const handymanService = () => {
         try {
           let invoice_data = await HandymanInvoice.findOne({ where: {project_id, invoice_id}, raw:true});
           invoice_data.articles = invoice_data.articles && JSON.parse(invoice_data.articles);
+          invoice_data.articles_total = invoice_data.articles_total && JSON.parse(invoice_data.articles_total);
           invoice_data.updated_articles = invoice_data.updated_articles && JSON.parse(invoice_data.updated_articles);
+          invoice_data.updated_total = invoice_data.updated_total && JSON.parse(invoice_data.updated_total);
           invoice_data.customer_data = invoice_data.customer_data && JSON.parse(invoice_data.customer_data);
           invoice_data.handyman_data = invoice_data.handyman_data && JSON.parse(invoice_data.handyman_data);
           invoice_data.offer_details = invoice_data.offer_details && JSON.parse(invoice_data.offer_details);
